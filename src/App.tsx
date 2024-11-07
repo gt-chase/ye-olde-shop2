@@ -107,29 +107,36 @@ function App() {
 
   const simulateAddToCartError = () => {
     if (Math.random() < 0.15) { // 15% chance of error
-      toast.error('Error: Unable to add item to cart');
+      // toast.error('Error: Unable to add item to cart');
       throw new Error('Add to Cart Failed');
     }
   }
   
   const addToCart = (product: Product) => {
-    simulateAddToCartError();
-    setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === product.id)
-      if (existingItem) {
-        const updatedCart = prevCart.map(item =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        )
-        updateCartApi(updatedCart)
-        return updatedCart
-      } else {
-        const newCart = [...prevCart, { ...product, quantity: 1 }]
-        addNewItemToCartApi(product.id, 1) // Simulate network request to add item
-        return newCart
-      }
-    })
-    toast.success('Item added to cart!')
-  }
+
+    try {
+      simulateAddToCartError();
+      setCart(prevCart => {
+        const existingItem = prevCart.find(item => item.id === product.id)
+        if (existingItem) {
+          const updatedCart = prevCart.map(item =>
+            item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          )
+          updateCartApi(updatedCart)
+          return updatedCart
+        } else {
+          const newCart = [...prevCart, { ...product, quantity: 1 }]
+          addNewItemToCartApi(product.id, 1) // Simulate network request to add item
+          return newCart
+        }
+      });
+      toast.success('Item added to cart!')
+      } catch (error) { 
+        console.error('Add to cart error:', error);
+        toast.error('Error: Unable to add item to cart');
+      } 
+    }
+  
 
   const removeFromCart = (productId: number) => {
     setCart(prevCart => {
@@ -476,13 +483,12 @@ function App() {
       </div>
     )}
   </div>
-</div>
+  </div>
 
       )}
 
       <ToastContainer position="bottom-right" />
-    </div>
+  </div>
   )
 }
-
 export default App
