@@ -281,7 +281,7 @@ function App() {
             {filteredProducts.map(product => (
               <div key={product.id} className="product-card">
                 <img src={product.image} alt={product.title} style={{ width: '150px', height: '150px', objectFit: 'cover' }} />
-                <h3>{product.title}</h3>
+                <h4>{product.title}</h4>
                 <p>${product.price}</p>
                 <button onClick={() => addToCart(product)}>Add to Cart</button>
               </div>
