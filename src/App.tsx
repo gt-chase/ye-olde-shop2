@@ -105,7 +105,15 @@ function App() {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
   const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
+  const simulateAddToCartError = () => {
+    if (Math.random() < 0.15) { // 15% chance of error
+      toast.error('Error: Unable to add item to cart');
+      throw new Error('Add to Cart Failed');
+    }
+  }
+  
   const addToCart = (product: Product) => {
+    simulateAddToCartError();
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === product.id)
       if (existingItem) {
@@ -212,15 +220,28 @@ function App() {
       .replace(/\D/g, '')
       .replace(/(\d{2})(\d{0,2})/, '$1/$2')
   }
-  const checkout = () => {
-    if (cart.length === 0) {
-      toast.error('Your cart is empty!')
-      return
+
+  const simulateCheckoutError = () => {
+    if (Math.random() < 0.30) { // 30% chance of error
+      toast.error('Error: Unable to proceed to checkout');
+      throw new Error('Checkout Error');
     }
-    setShowCheckout(true)
-    setShowCart(false)
-    setCheckoutStep(0)
-    window.history.pushState({}, '') // Back button support
+  }
+  
+  const checkout = () => {
+    try{
+      simulateCheckoutError();
+      if (cart.length === 0) {
+        toast.error('Your cart is empty!')
+        return
+      }
+      setShowCheckout(true)
+      setShowCart(false)
+      setCheckoutStep(0)
+      window.history.pushState({}, '') // Back button support
+    } catch (error) {
+      console.error('Checkout error:', error);
+    }
   }
 
   useEffect(() => {
